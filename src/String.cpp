@@ -60,7 +60,7 @@ namespace slib {
         return false;
     }
 
-    String String::operator+(const String& other) {
+    String String::operator+(const String& other) const {
         size_t totalLength = ByteLength() + other.ByteLength();
 
         char* buf = (char*)malloc(totalLength + 1);
@@ -105,5 +105,21 @@ namespace slib {
             data = _strdup(other.data);
             len = other.len;
         }
+    }
+
+    // Simple character-by-character equality check
+    bool String::operator==(const String& other) const {
+        if (other.ByteLength() != ByteLength()) return false;
+
+        size_t len = ByteLength();
+        char* dataA = Data();
+        char* dataB = Data();
+
+        for (size_t i = 0; i < len; i++) {
+            if (dataA[i] != dataB[i])
+                return false;
+        }
+
+        return true;
     }
 }

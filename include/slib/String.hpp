@@ -14,11 +14,12 @@ namespace slib {
         size_t ByteLength() const;
         bool Contains(char c) const;
 
-        String operator+(const String& other);
+        String operator+(const String& other) const;
         void operator+=(const String& other);
         void operator=(const String& other);
+        bool operator==(const String& other) const;
 
-        char operator[](size_t idx) { return sso ? small[idx] : data[idx]; }
+        char operator[](size_t idx) const { return sso ? small[idx] : data[idx]; }
     private:
         bool sso;
         union {
@@ -31,6 +32,5 @@ namespace slib {
                 char small[15];
             };
         };
-        
     };
 }
