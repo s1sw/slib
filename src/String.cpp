@@ -49,6 +49,17 @@ namespace slib {
         return sso ? strlen(small) : len;
     }
 
+    bool String::Contains(char c) const {
+        size_t len = ByteLength();
+        char* data = Data();
+        for (size_t i = 0; i < len; i++) {
+            if (data[i] == c)
+                return true;
+        }
+
+        return false;
+    }
+
     String String::operator+(const String& other) {
         size_t totalLength = ByteLength() + other.ByteLength();
 

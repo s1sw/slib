@@ -12,6 +12,7 @@ namespace slib {
         const char* CStr() const { return sso ? small : data; }
         // Please note that this doesn't include the null byte at the end of the string!
         size_t ByteLength() const;
+        bool Contains(char c) const;
 
         String operator+(const String& other);
         void operator+=(const String& other);
