@@ -15,21 +15,30 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="List.hpp">
+    <ClInclude Include="..\include\slib\Path.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StaticAllocList.hpp">
+    <ClInclude Include="..\include\slib\String.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Iterator.hpp">
+    <ClInclude Include="../include/slib/BinarySearch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BinarySearch.hpp">
+    <ClInclude Include="../include/slib/Iterator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../include/slib/List.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="../include/slib/StaticAllocList.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dummy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\String.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
