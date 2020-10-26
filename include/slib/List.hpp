@@ -88,12 +88,12 @@ namespace slib {
                 return *this;
             }
 
-            bool operator==(Iterator& other) { return num == other.num; }
-            bool operator!=(Iterator& other) { return num != other.num; }
-            bool operator>=(Iterator& other) { return num >= other.num; }
-            bool operator>(Iterator& other) { return num > other.num; }
-            bool operator<=(Iterator& other) { return num <= other.num; }
-            bool operator<(Iterator& other) { return num < other.num; }
+            bool operator==(const Iterator& other) const { return num == other.num; }
+            bool operator!=(const Iterator& other) const { return num != other.num; }
+            bool operator>=(const Iterator& other) const { return num >= other.num; }
+            bool operator> (const Iterator& other) const { return num > other.num; }
+            bool operator<=(const Iterator& other) const { return num <= other.num; }
+            bool operator< (const Iterator& other) const { return num < other.num; }
 
 
             V& operator*() {
