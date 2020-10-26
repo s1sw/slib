@@ -116,8 +116,8 @@ namespace slib {
             using ValueType = V;
             using Pointer = V*;
             using Reference = V&;
-            using IteratorCategory = ForwardIteratorTag;
-            static InputIteratorTag Category() { return IteratorCategory{}; }
+            using IteratorCategory = RandomAccessIteratorTag;
+            static RandomAccessIteratorTag Category() { return IteratorCategory{}; }
         };
 
         Iterator Begin() { return Iterator(*this); }

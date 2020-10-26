@@ -134,7 +134,7 @@ namespace slib {
             using Pointer = V*;
             using Reference = V&;
             using IteratorCategory = RandomAccessIteratorTag;
-            static IteratorCategory Category() { return IteratorCategory{}; }
+            static RandomAccessIteratorTag Category() { return IteratorCategory{}; }
         };
 
         Iterator Begin() { return Iterator(*this); }
