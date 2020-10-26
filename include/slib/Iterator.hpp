@@ -23,10 +23,10 @@ namespace slib {
             return result;
         }
 
-        /*template<typename iter>
+        template<typename iter>
         size_t Distance(const iter& a, const iter& b, RandomAccessIteratorTag) {
             return b - a;
-        }*/
+        }
 
         template <typename iter>
         void Advance(iter& it, size_t count, RandomAccessIteratorTag) {
