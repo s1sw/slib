@@ -56,6 +56,14 @@ public:
         Assert::AreEqual(STR_A STR_B, a.CStr());
     }
 
+    TEST_METHOD(SubstringTest) {
+        slib::String a(STR_A);
+
+        Assert::AreEqual("is our", a.Substring(5, 6).CStr());
+        Assert::AreEqual(STR_A, a.Substring(0).CStr());
+        Assert::AreEqual("is our first \"long\" string...", a.Substring(5).CStr());
+    }
+
 #undef STR_A
 #undef STR_B
     };
