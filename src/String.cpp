@@ -1,16 +1,20 @@
 #include "../include/slib/String.hpp"
+#include "../include/slib/MinMax.hpp"
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
 
 namespace slib {
+    const size_t SSO_THRESHOLD = 14;
+
     String::String(const char* cStr) {
         size_t length = strlen(cStr);
 
-        if (length <= 14) {
+        if (length < SSO_THRESHOLD) {
             sso = true;
             strncpy_s(small, cStr, length);
-            small[14] = '\0';
+            small[SSO_THRESHOLD - 1] = '\0';
+            smallLen = length;
         } else {
             sso = false;
             data = _strdup(cStr);
@@ -22,7 +26,8 @@ namespace slib {
         sso = other.sso;
 
         if (sso) {
-            memcpy(small, other.small, 15);
+            memcpy(small, other.small, 14);
+            smallLen = other.smallLen;
         } else {
             data = _strdup(other.data);
             len = other.len;
@@ -33,7 +38,8 @@ namespace slib {
         sso = other.sso;
 
         if (sso) {
-            memcpy(small, other.small, 15);
+            memcpy(small, other.small, SSO_THRESHOLD);
+            smallLen = other.smallLen;
         } else {
             data = other.data;
             len = other.len;
@@ -41,12 +47,15 @@ namespace slib {
         }
     }
 
-    String::String() : sso(true) {
-        memset(small, 0, 15);
+    String::String() : sso(true), smallLen(0) {
+        memset(small, 0, SSO_THRESHOLD);
     }
 
     size_t String::ByteLength() const {
-        return sso ? strlen(small) : len;
+        // sanity check
+        if (sso)
+            assert(smallLen < SSO_THRESHOLD);
+        return sso ? smallLen : len;
     }
 
     bool String::Contains(char c) const {
@@ -58,6 +67,32 @@ namespace slib {
         }
 
         return false;
+    }
+
+    String String::Substring(size_t index, size_t count) {
+        size_t actualCount = min(count, ByteLength() - index);
+        assert(index < ByteLength());
+
+        if (actualCount < SSO_THRESHOLD) {
+            // Can do this without allocating
+            String st;
+            st.smallLen = actualCount;
+            memcpy(st.small, Data() + index, actualCount);
+
+            return st;
+        } else {
+            char* buf = (char*)malloc(actualCount + 1);
+            assert(buf);
+            buf[actualCount] = '\0';
+
+            String st;
+            st.sso = false;
+            st.data = buf;
+            st.len = actualCount;
+
+            memcpy(buf, Data() + index, actualCount);
+            return st;
+        }
     }
 
     String String::operator+(const String& other) const {
@@ -86,11 +121,12 @@ namespace slib {
         if (!sso)
             free(data);
 
-        sso = totalLength < 15;
+        sso = totalLength < SSO_THRESHOLD;
         len = totalLength;
 
         if (sso) {
             memcpy(small, buf, totalLength + 1);
+            smallLen = totalLength;
         } else {
             data = buf;
         }
@@ -100,7 +136,8 @@ namespace slib {
         sso = other.sso;
 
         if (sso) {
-            memcpy(small, other.small, 15);
+            memcpy(small, other.small, SSO_THRESHOLD);
+            smallLen = other.smallLen;
         } else {
             data = _strdup(other.data);
             len = other.len;
@@ -121,5 +158,21 @@ namespace slib {
         }
 
         return true;
+    }
+
+    String::Iterator String::Begin() {
+        return String::Iterator{ *this, 0 };
+    }
+
+    String::Iterator String::begin() {
+        return String::Iterator{ *this, 0 };
+    }
+
+    String::Iterator String::End() {
+        return String::Iterator{ *this, ByteLength() };
+    }
+
+    String::Iterator String::end() {
+        return String::Iterator{ *this, ByteLength() };
     }
 }
