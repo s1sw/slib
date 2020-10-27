@@ -23,10 +23,6 @@ private:
     }
 
     slib::StaticAllocList<int> genRandomList(int length) {
-        static std::default_random_engine rng;
-
-        std::uniform_int_distribution<int> dist{};
-
         slib::StaticAllocList<int> sal(length);
         for (int i = 0; i < length; i++) {
             sal.Add(i);

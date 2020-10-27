@@ -1,19 +1,21 @@
 #pragma once
+#include "String.hpp"
 
 namespace slib {
-    template<char separator>
-    class BasePath {
+    class Path {
     public:
+        Path(String pathStr);
+        bool IsAbsolute() const;
+        String FileExtension();
+        // Returns either the file name without extension or the name of the final directory.
+        String Stem();
+        void Normalize();
+        Path ParentPath() const;
+        const char* CStr() const;
+        void ReplaceSeparator(char newSeparator);
 
+        operator String() const;
+    private:
+        String pathStr;
     };
-
-    // This is meant to be usable for both virtual filesystems in games
-    // and native filesystems, so we should support using either separator.
-    // In a perfect world, everything would use / but unfortunately Windows exists.
-    typedef BasePath<'/'> Path;
-#ifdef _WIN32
-    typedef BasePath<'\\'> NativePath;
-#else
-    typedef Path NativePath;
-#endif
 }

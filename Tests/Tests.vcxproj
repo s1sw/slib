@@ -157,7 +157,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BinarySearchTests.cpp" />
+    <ClCompile Include="LinkedListTests.cpp" />
     <ClCompile Include="ListTests.cpp" />
+    <ClCompile Include="PathTests.cpp" />
     <ClCompile Include="StaticAllocListTests.cpp" />
     <ClCompile Include="StringTests.cpp" />
   </ItemGroup>

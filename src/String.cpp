@@ -7,6 +7,13 @@
 namespace slib {
     const size_t SSO_THRESHOLD = 14;
 
+    String::String(char c) {
+        sso = true;
+        smallLen = 1;
+        small[0] = c;
+        small[1] = 0;
+    }
+
     String::String(const char* cStr) {
         size_t length = strlen(cStr);
 
@@ -93,6 +100,16 @@ namespace slib {
             memcpy(buf, Data() + index, actualCount);
             return st;
         }
+    }
+
+    void String::Clear() {
+        if (!sso) {
+            free(data);
+        }
+
+        sso = true;
+        smallLen = 0;
+        memset(small, 0, SSO_THRESHOLD);
     }
 
     String String::operator+(const String& other) const {

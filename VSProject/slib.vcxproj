@@ -143,10 +143,13 @@
     <ClInclude Include="../include/slib/Iterator.hpp" />
     <ClInclude Include="../include/slib/List.hpp" />
     <ClInclude Include="../include/slib/StaticAllocList.hpp" />
+    <ClInclude Include="..\include\slib\LinkedList.hpp" />
+    <ClInclude Include="..\include\slib\MinMax.hpp" />
     <ClInclude Include="..\include\slib\Path.hpp" />
     <ClInclude Include="..\include\slib\String.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Path.cpp" />
     <ClCompile Include="..\src\String.cpp" />
     <ClCompile Include="Dummy.cpp" />
   </ItemGroup>

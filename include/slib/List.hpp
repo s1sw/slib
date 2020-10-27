@@ -1,6 +1,8 @@
 #pragma once
 #include <cassert>
 #include "Iterator.hpp"
+#include <stdlib.h>
+#include <string.h>
 
 namespace slib {
     template <class V>
