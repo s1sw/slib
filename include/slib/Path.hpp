@@ -5,14 +5,14 @@ namespace slib {
     class Path {
     public:
         Path(String pathStr);
-        bool IsAbsolute() const;
-        String FileExtension();
+        bool isAbsolute() const;
+        String fileExtension();
         // Returns either the file name without extension or the name of the final directory.
-        String Stem();
-        void Normalize();
-        Path ParentPath() const;
-        const char* CStr() const;
-        void ReplaceSeparator(char newSeparator);
+        String stem();
+        void normalize();
+        Path parentPath() const;
+        const char* cStr() const;
+        void replaceSeparator(char newSeparator);
 
         operator String() const;
     private:

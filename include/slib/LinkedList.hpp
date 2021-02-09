@@ -16,7 +16,7 @@ namespace slib {
     public:
         using Element = LinkedListElement<V>;
 
-        Element* Add(const V& el) {
+        Element* add(const V& el) {
             Element* last = head;
 
             if (head != nullptr) {

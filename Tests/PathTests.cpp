@@ -8,59 +8,59 @@ namespace Tests {
 public:
 
     TEST_METHOD(Basic) {
-        Assert::IsTrue(slib::Path("C:/test.txt").IsAbsolute());
-        Assert::IsFalse(slib::Path("../cat.txt").IsAbsolute());
+        Assert::IsTrue(slib::Path("C:/test.txt").isAbsolute());
+        Assert::IsFalse(slib::Path("../cat.txt").isAbsolute());
     }
 
     TEST_METHOD(FileExtensions) {
-        Assert::AreEqual(".txt", slib::Path("C:/test.txt").FileExtension().CStr());
-        Assert::AreEqual(".txt", slib::Path("/test.txt").FileExtension().CStr());
-        Assert::AreEqual(".txt", slib::Path("../cat.txt").FileExtension().CStr());
-        Assert::AreEqual(".txt", slib::Path(".haha.so.many...dots.....txt").FileExtension().CStr());
-        Assert::AreEqual("", slib::Path("no_extension").FileExtension().CStr());
-        Assert::AreEqual(".", slib::Path("sorta_extension.").FileExtension().CStr());
-        Assert::AreEqual(".extension_only", slib::Path(".extension_only").FileExtension().CStr());
+        Assert::AreEqual(".txt", slib::Path("C:/test.txt").fileExtension().cStr());
+        Assert::AreEqual(".txt", slib::Path("/test.txt").fileExtension().cStr());
+        Assert::AreEqual(".txt", slib::Path("../cat.txt").fileExtension().cStr());
+        Assert::AreEqual(".txt", slib::Path(".haha.so.many...dots.....txt").fileExtension().cStr());
+        Assert::AreEqual("", slib::Path("no_extension").fileExtension().cStr());
+        Assert::AreEqual(".", slib::Path("sorta_extension.").fileExtension().cStr());
+        Assert::AreEqual(".extension_only", slib::Path(".extension_only").fileExtension().cStr());
     }
 
-    TEST_METHOD(Stem) {
-        Assert::AreEqual("hello", slib::Path("C:/hello.world").Stem().CStr());
-        Assert::AreEqual("hello", slib::Path("hello").Stem().CStr());
-        Assert::AreEqual("hello", slib::Path("hello.world").Stem().CStr());
+    TEST_METHOD(stem) {
+        Assert::AreEqual("hello", slib::Path("C:/hello.world").stem().cStr());
+        Assert::AreEqual("hello", slib::Path("hello").stem().cStr());
+        Assert::AreEqual("hello", slib::Path("hello.world").stem().cStr());
     }
 
-    TEST_METHOD(Normalize) {
+    TEST_METHOD(normalize) {
         slib::Path p1("hello/./././././world");
-        p1.Normalize();
-        Assert::AreEqual("hello/world", p1.CStr());
+        p1.normalize();
+        Assert::AreEqual("hello/world", p1.cStr());
 
         slib::Path p2("C:/hello/../world.txt");
-        p2.Normalize();
-        Assert::AreEqual("C:/world.txt", p2.CStr());
+        p2.normalize();
+        Assert::AreEqual("C:/world.txt", p2.cStr());
 
         slib::Path p3("/usr/../mnt/../home/someone/././.config/");
-        p3.Normalize();
-        Assert::AreEqual("/home/someone/.config", p3.CStr());
+        p3.normalize();
+        Assert::AreEqual("/home/someone/.config", p3.cStr());
 
         slib::Path p4("C:\\Users\\someone\\AppData\\Roaming");
-        p4.Normalize();
-        Assert::AreEqual("C:/Users/someone/AppData/Roaming", p4.CStr());
+        p4.normalize();
+        Assert::AreEqual("C:/Users/someone/AppData/Roaming", p4.cStr());
     }
 
     TEST_METHOD(ParentPath) {
-        Assert::AreEqual("/home/someone", slib::Path("/home/someone/.config").ParentPath().CStr());
-        Assert::AreEqual("C:/", slib::Path("C:/test").ParentPath().CStr());
+        Assert::AreEqual("/home/someone", slib::Path("/home/someone/.config").parentPath().cStr());
+        Assert::AreEqual("C:/", slib::Path("C:/test").parentPath().cStr());
 
-        Assert::AreEqual("C:/Users/someone/AppData", slib::Path("C:\\Users\\someone\\AppData\\Roaming").ParentPath().CStr());
+        Assert::AreEqual("C:/Users/someone/AppData", slib::Path("C:\\Users\\someone\\AppData\\Roaming").parentPath().cStr());
     }
 
     TEST_METHOD(ReplaceSeparator) {
         slib::Path p1("C:/Users/someone");
-        p1.ReplaceSeparator('\\');
-        Assert::AreEqual("C:\\Users\\someone", p1.CStr());
+        p1.replaceSeparator('\\');
+        Assert::AreEqual("C:\\Users\\someone", p1.cStr());
 
         slib::Path p2("C:\\Users\\someone");
-        p2.ReplaceSeparator('/');
-        Assert::AreEqual("C:/Users/someone", p2.CStr());
+        p2.replaceSeparator('/');
+        Assert::AreEqual("C:/Users/someone", p2.cStr());
     }
     };
 }

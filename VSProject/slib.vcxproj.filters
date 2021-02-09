@@ -39,6 +39,9 @@
     <ClInclude Include="..\include\slib\LinkedList.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\slib\BinaryTree.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dummy.cpp">

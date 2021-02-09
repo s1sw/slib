@@ -24,7 +24,7 @@ namespace slib {
             smallLen = length;
         } else {
             sso = false;
-            data = _strdup(cStr);
+            _data = _strdup(cStr);
             len = length;
         }
     }
@@ -36,7 +36,7 @@ namespace slib {
             memcpy(small, other.small, 14);
             smallLen = other.smallLen;
         } else {
-            data = _strdup(other.data);
+            _data = _strdup(other._data);
             len = other.len;
         }
     }
@@ -48,9 +48,9 @@ namespace slib {
             memcpy(small, other.small, SSO_THRESHOLD);
             smallLen = other.smallLen;
         } else {
-            data = other.data;
+            _data = other._data;
             len = other.len;
-            other.data = nullptr;
+            other._data = nullptr;
         }
     }
 
@@ -58,16 +58,16 @@ namespace slib {
         memset(small, 0, SSO_THRESHOLD);
     }
 
-    size_t String::ByteLength() const {
+    size_t String::byteLength() const {
         // sanity check
         if (sso)
             assert(smallLen < SSO_THRESHOLD);
         return sso ? smallLen : len;
     }
 
-    bool String::Contains(char c) const {
-        size_t len = ByteLength();
-        char* data = Data();
+    bool String::contains(char c) const {
+        size_t len = byteLength();
+        char* data = this->data();
         for (size_t i = 0; i < len; i++) {
             if (data[i] == c)
                 return true;
@@ -76,15 +76,15 @@ namespace slib {
         return false;
     }
 
-    String String::Substring(size_t index, size_t count) {
-        size_t actualCount = min(count, ByteLength() - index);
-        assert(index < ByteLength());
+    String String::substring(size_t index, size_t count) {
+        size_t actualCount = min(count, byteLength() - index);
+        assert(index < byteLength());
 
         if (actualCount < SSO_THRESHOLD) {
             // Can do this without allocating
             String st;
             st.smallLen = actualCount;
-            memcpy(st.small, Data() + index, actualCount);
+            memcpy(st.small, data() + index, actualCount);
 
             return st;
         } else {
@@ -94,17 +94,17 @@ namespace slib {
 
             String st;
             st.sso = false;
-            st.data = buf;
+            st._data = buf;
             st.len = actualCount;
 
-            memcpy(buf, Data() + index, actualCount);
+            memcpy(buf, data() + index, actualCount);
             return st;
         }
     }
 
-    void String::Clear() {
+    void String::clear() {
         if (!sso) {
-            free(data);
+            free(_data);
         }
 
         sso = true;
@@ -113,30 +113,30 @@ namespace slib {
     }
 
     String String::operator+(const String& other) const {
-        size_t totalLength = ByteLength() + other.ByteLength();
+        size_t totalLength = byteLength() + other.byteLength();
 
         char* buf = (char*)malloc(totalLength + 1);
         assert(buf);
 
-        strncpy_s(buf, totalLength + 1, Data(), ByteLength());
-        strncpy_s(buf + ByteLength(), totalLength - ByteLength() + 1, other.Data(), other.ByteLength());
+        strncpy_s(buf, totalLength + 1, data(), byteLength());
+        strncpy_s(buf + byteLength(), totalLength - byteLength() + 1, other.data(), other.byteLength());
         buf[totalLength] = '\0';
 
         return buf;
     }
 
     void String::operator+=(const String& other) {
-        size_t totalLength = ByteLength() + other.ByteLength();
+        size_t totalLength = byteLength() + other.byteLength();
 
         char* buf = (char*)malloc(totalLength + 1);
         assert(buf);
 
-        strncpy_s(buf, totalLength + 1, Data(), ByteLength());
-        strncpy_s(buf + ByteLength(), totalLength - ByteLength() + 1, other.Data(), other.ByteLength());
+        strncpy_s(buf, totalLength + 1, data(), byteLength());
+        strncpy_s(buf + byteLength(), totalLength - byteLength() + 1, other.data(), other.byteLength());
         buf[totalLength] = '\0';
 
         if (!sso)
-            free(data);
+            free(_data);
 
         sso = totalLength < SSO_THRESHOLD;
         len = totalLength;
@@ -145,7 +145,7 @@ namespace slib {
             memcpy(small, buf, totalLength + 1);
             smallLen = totalLength;
         } else {
-            data = buf;
+            _data = buf;
         }
     }
 
@@ -156,18 +156,18 @@ namespace slib {
             memcpy(small, other.small, SSO_THRESHOLD);
             smallLen = other.smallLen;
         } else {
-            data = _strdup(other.data);
+            _data = _strdup(other._data);
             len = other.len;
         }
     }
 
     // Simple character-by-character equality check
     bool String::operator==(const String& other) const {
-        if (other.ByteLength() != ByteLength()) return false;
+        if (other.byteLength() != byteLength()) return false;
 
-        size_t len = ByteLength();
-        char* dataA = Data();
-        char* dataB = Data();
+        size_t len = byteLength();
+        char* dataA = data();
+        char* dataB = data();
 
         for (size_t i = 0; i < len; i++) {
             if (dataA[i] != dataB[i])
@@ -177,19 +177,11 @@ namespace slib {
         return true;
     }
 
-    String::Iterator String::Begin() {
-        return String::Iterator{ *this, 0 };
-    }
-
     String::Iterator String::begin() {
         return String::Iterator{ *this, 0 };
     }
 
-    String::Iterator String::End() {
-        return String::Iterator{ *this, ByteLength() };
-    }
-
     String::Iterator String::end() {
-        return String::Iterator{ *this, ByteLength() };
+        return String::Iterator{ *this, byteLength() };
     }
 }

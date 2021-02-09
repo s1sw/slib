@@ -7,17 +7,17 @@
 
 namespace slib {
 
-    bool IsSeparator(char c) {
+    bool isSeparator(char c) {
         return c == '/' || c == '\\';
     }
 
-    bool StartsWithDrive(String pathStr) {
-        return pathStr[1] == ':' && IsSeparator(pathStr[2]);
+    bool startsWithDrive(String pathStr) {
+        return pathStr[1] == ':' && isSeparator(pathStr[2]);
     }
 
     Path::Path(String pathStr) : pathStr(pathStr) {}
 
-    bool Path::IsAbsolute() const {
+    bool Path::isAbsolute() const {
 #ifdef _WIN32
         // On Windows, there are two kinds of absolute path.
         // The normal kind start with a drive letter, followed by ':' and finally '\' or '/'.
@@ -25,49 +25,49 @@ namespace slib {
         // For now, however, we'll just pretend that UNC paths don't exist since we don't need them.
         // Therefore the shortest valid path will have at least 3 characters.
 
-        if (pathStr.ByteLength() < 3) return false;
+        if (pathStr.byteLength() < 3) return false;
 
         // Drive letter path
-        if (pathStr[1] == ':' && IsSeparator(pathStr[2])) return true;
+        if (pathStr[1] == ':' && isSeparator(pathStr[2])) return true;
 
         return false;
 #else
         // On Linux, an absolute path will always start with a forward slash.
-        return pathStr.ByteLength() > 0 && pathStr[0] == '/';
+        return pathStr.byteLength() > 0 && pathStr[0] == '/';
 #endif
     }
 
-    String Path::FileExtension() {
-        String::Iterator lastDot = pathStr.End();
+    String Path::fileExtension() {
+        String::Iterator lastDot = pathStr.end();
 
-        for (auto it = pathStr.Begin(); it < pathStr.End(); ++it) {
+        for (auto it = pathStr.begin(); it < pathStr.end(); ++it) {
             if (*it == '.') lastDot = it;
         }
 
-        if (lastDot == pathStr.End()) return "";
+        if (lastDot == pathStr.end()) return "";
 
-        return pathStr.Substring(lastDot.GetIndex());
+        return pathStr.substring(lastDot.getIndex());
     }
 
-    String Path::Stem() {
-        String::Iterator lastSlash = pathStr.End();
-        String::Iterator lastDot = pathStr.End();
+    String Path::stem() {
+        String::Iterator lastSlash = pathStr.end();
+        String::Iterator lastDot = pathStr.end();
 
-        for (auto it = pathStr.Begin(); it < pathStr.End(); ++it) {
-            if (IsSeparator(*it)) lastSlash = it;
+        for (auto it = pathStr.begin(); it < pathStr.end(); ++it) {
+            if (isSeparator(*it)) lastSlash = it;
             if (*it == '.') lastDot = it;
         }
 
-        size_t start = lastSlash == pathStr.End() ? 0 : lastSlash.GetIndex() + 1;
+        size_t start = lastSlash == pathStr.end() ? 0 : lastSlash.getIndex() + 1;
 
-        return pathStr.Substring(start, lastDot.GetIndex() - start);
+        return pathStr.substring(start, lastDot.getIndex() - start);
     }
 
-    void Path::Normalize() {
+    void Path::normalize() {
         // Empty path is already normalized
-        if (pathStr.Empty()) return;
+        if (pathStr.empty()) return;
 
-        bool hasRootDrive = pathStr[1] == ':' && IsSeparator(pathStr[2]);
+        bool hasRootDrive = pathStr[1] == ':' && isSeparator(pathStr[2]);
 
         // Build a linked list of path elements for easy removal
         LinkedList<String> elements;
@@ -75,14 +75,14 @@ namespace slib {
         pathStr += "/";
 
         String curr;
-        for (auto it = pathStr.Begin(); it < pathStr.End(); ++it) {
-            if (IsSeparator(*it)) {
+        for (auto it = pathStr.begin(); it < pathStr.end(); ++it) {
+            if (isSeparator(*it)) {
                 // Ignore multiple separators by skipping when we don't have a name built up
-                if (curr.Empty()) continue;
+                if (curr.empty()) continue;
 
-                elements.Add(curr);
+                elements.add(curr);
 
-                curr.Clear();
+                curr.clear();
                 continue;
             }
             curr += *it;
@@ -119,11 +119,11 @@ namespace slib {
         // Recreate path from linked list
         String newPath;
 
-        if (IsSeparator(pathStr[0]))
+        if (isSeparator(pathStr[0]))
             newPath += '/';
 
         /*if (hasRootDrive) {
-            newPath = pathStr.Substring(0, 2) + "/";
+            newPath = pathStr.substring(0, 2) + "/";
         }*/
 
         Element* next = elements.First();
@@ -137,43 +137,43 @@ namespace slib {
         }
 
         // Strip trailing separator
-        if (newPath[newPath.ByteLength() - 1]) {
-            newPath = newPath.Substring(0, newPath.ByteLength() - 1);
+        if (newPath[newPath.byteLength() - 1]) {
+            newPath = newPath.substring(0, newPath.byteLength() - 1);
         }
 
         pathStr = newPath;
     }
 
-    Path Path::ParentPath() const {
+    Path Path::parentPath() const {
         Path dup(pathStr);
-        dup.Normalize();
+        dup.normalize();
 
         // Search for the last directory separator and take the path
         // to be everything before that
 
-        String::Iterator lastSlash = dup.pathStr.End();
+        String::Iterator lastSlash = dup.pathStr.end();
 
-        for (auto it = dup.pathStr.Begin(); it < dup.pathStr.End(); ++it) {
-            if (IsSeparator(*it)) lastSlash = it;
+        for (auto it = dup.pathStr.begin(); it < dup.pathStr.end(); ++it) {
+            if (isSeparator(*it)) lastSlash = it;
         }
 
-        dup.pathStr = dup.pathStr.Substring(0, lastSlash.GetIndex());
+        dup.pathStr = dup.pathStr.substring(0, lastSlash.getIndex());
 
         // Add the slash for the drive path
-        if (StartsWithDrive(pathStr) && dup.pathStr.ByteLength() == 2) {
+        if (startsWithDrive(pathStr) && dup.pathStr.byteLength() == 2) {
             dup.pathStr += "/";
         }
 
         return dup;
     }
 
-    const char* Path::CStr() const {
-        return pathStr.CStr();
+    const char* Path::cStr() const {
+        return pathStr.cStr();
     }
 
-    void Path::ReplaceSeparator(char newSeparator) {
+    void Path::replaceSeparator(char newSeparator) {
         for (auto& c : pathStr) {
-            if (IsSeparator(c))
+            if (isSeparator(c))
                 c = newSeparator;
         }
     }

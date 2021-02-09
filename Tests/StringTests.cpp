@@ -10,13 +10,13 @@ public:
     TEST_METHOD(Basic) {
         slib::String str;
 
-        Assert::AreEqual((size_t)0, str.ByteLength());
+        Assert::AreEqual((size_t)0, str.byteLength());
 
         str = "hello world!";
 
-        Assert::AreEqual((size_t)12, str.ByteLength());
+        Assert::AreEqual((size_t)12, str.byteLength());
         Assert::AreEqual('e', str[1]);
-        Assert::AreEqual("hello world!", str.CStr());
+        Assert::AreEqual("hello world!", str.cStr());
     }
 
     TEST_METHOD(Concatenation) {
@@ -37,7 +37,7 @@ public:
 
         slib::String concatenated = a + b;
 
-        Assert::AreEqual(STR_A STR_B, concatenated.CStr());
+        Assert::AreEqual(STR_A STR_B, concatenated.cStr());
     }
 
     TEST_METHOD(InPlaceConcatenation) {
@@ -45,7 +45,7 @@ public:
 
         a += "b";
 
-        Assert::AreEqual("ab", a.CStr());
+        Assert::AreEqual("ab", a.cStr());
     }
 
     TEST_METHOD(InPlaceLongConcatenation) {
@@ -53,15 +53,15 @@ public:
 
         a += STR_B;
 
-        Assert::AreEqual(STR_A STR_B, a.CStr());
+        Assert::AreEqual(STR_A STR_B, a.cStr());
     }
 
     TEST_METHOD(SubstringTest) {
         slib::String a(STR_A);
 
-        Assert::AreEqual("is our", a.Substring(5, 6).CStr());
-        Assert::AreEqual(STR_A, a.Substring(0).CStr());
-        Assert::AreEqual("is our first \"long\" string...", a.Substring(5).CStr());
+        Assert::AreEqual("is our", a.substring(5, 6).cStr());
+        Assert::AreEqual(STR_A, a.substring(0).cStr());
+        Assert::AreEqual("is our first \"long\" string...", a.substring(5).cStr());
     }
 
 #undef STR_A

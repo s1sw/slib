@@ -10,7 +10,7 @@ namespace Microsoft {
     namespace VisualStudio {
         namespace CppUnitTestFramework {
             template<>
-            static std::wstring ToString<slib::StaticAllocList<int>::Iterator>(const slib::StaticAllocList<int>::Iterator& it) { return std::to_wstring(it.GetIndex()); }
+            static std::wstring ToString<slib::StaticAllocList<int>::Iterator>(const slib::StaticAllocList<int>::Iterator& it) { return std::to_wstring(it.getIndex()); }
         }
     }
 }
@@ -25,7 +25,7 @@ private:
     slib::StaticAllocList<int> genRandomList(int length) {
         slib::StaticAllocList<int> sal(length);
         for (int i = 0; i < length; i++) {
-            sal.Add(i);
+            sal.add(i);
         }
 
         return sal;
@@ -35,8 +35,8 @@ public:
     TEST_METHOD(SimpleSearches) {
         auto list = makeList();
 
-        auto eleven = slib::BinarySearch(11, list);
-        auto thirteen = slib::BinarySearch(13, list);
+        auto eleven = slib::binarySearch(11, list);
+        auto thirteen = slib::binarySearch(13, list);
         Assert::AreEqual(11, *eleven);
         Assert::AreEqual(13, *thirteen);
     }
@@ -44,13 +44,13 @@ public:
     TEST_METHOD(RandomisedSearch) {
         auto randList = genRandomList(500000);
 
-        auto targetIt = randList.Begin();
-        slib::Advance(targetIt, 15650);
+        auto targetIt = randList.begin();
+        slib::advance(targetIt, 15650);
         int targetVal = *targetIt;
 
-        auto found = slib::BinarySearch(targetVal, randList);
+        auto found = slib::binarySearch(targetVal, randList);
 
-        Assert::AreNotEqual(randList.End(), found);
+        Assert::AreNotEqual(randList.end(), found);
         Assert::AreEqual(targetVal, *found);
     }
     };

@@ -48,11 +48,11 @@ namespace slib {
             other.data = nullptr;
         }
 
-        size_t NumElements() const {
+        size_t numElements() const {
             return actualElements;
         }
 
-        V& At(size_t idx) {
+        V& at(size_t idx) {
             assert(idx < actualElements);
             return data[idx];
         }
@@ -62,7 +62,7 @@ namespace slib {
             return data[idx];
         }
 
-        void Add(const V& val) {
+        void add(const V& val) {
             if (actualElements == maxElements) {
                 assert(false && "Tried to add to full StaticAllocList");
                 return;
@@ -72,17 +72,17 @@ namespace slib {
             actualElements++;
         }
 
-        void RemoveAt(size_t idx) {
+        void removeAt(size_t idx) {
             memcpy(data + idx, data + idx + 1, (actualElements - idx) * sizeof(V));
             actualElements--;
         }
 
-        void RemoveFromStart(size_t numRemoved) {
+        void removeFromStart(size_t numRemoved) {
             memcpy(data, data + numRemoved, (actualElements - numRemoved) * sizeof(V));
             actualElements -= numRemoved;
         }
 
-        void RemoveFromEnd(size_t numRemoved) {
+        void removeFromEnd(size_t numRemoved) {
             actualElements -= numRemoved;
         }
 
@@ -125,7 +125,7 @@ namespace slib {
                 num += amt;
             }
 
-            size_t GetIndex() const {
+            size_t getIndex() const {
                 return num;
             }
 
@@ -137,13 +137,8 @@ namespace slib {
             static RandomAccessIteratorTag Category() { return IteratorCategory{}; }
         };
 
-        Iterator Begin() { return Iterator(*this); }
-        Iterator End() { return Iterator(*this, actualElements); }
-
-        // Define these as well so we can use
-        // range based for loops
-        Iterator begin() { return Begin(); }
-        Iterator end() { return End(); }
+        Iterator begin() { return Iterator(*this); }
+        Iterator end() { return Iterator(*this, actualElements); }
 
     private:
         size_t maxElements;

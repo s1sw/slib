@@ -11,21 +11,21 @@ namespace slib {
         String(String&& other);
         String();
 
-        char* Data() const { return sso ? (char*)small : data; }
-        const char* CStr() const { return sso ? small : data; }
+        char* data() const { return sso ? (char*)small : _data; }
+        const char* cStr() const { return sso ? small : _data; }
         // Please note that this doesn't include the null byte at the end of the string!
-        size_t ByteLength() const;
-        bool Empty() const { return ByteLength() == 0; }
-        bool Contains(char c) const;
-        String Substring(size_t index, size_t count = SIZE_MAX);
-        void Clear();
+        size_t byteLength() const;
+        bool empty() const { return byteLength() == 0; }
+        bool contains(char c) const;
+        String substring(size_t index, size_t count = SIZE_MAX);
+        void clear();
 
         String operator+(const String& other) const;
         void operator+=(const String& other);
         void operator=(const String& other);
         bool operator==(const String& other) const;
 
-        char& operator[](size_t idx) const { if (sso) return (char&)small[idx]; else return data[idx]; }
+        char& operator[](size_t idx) const { if (sso) return (char&)small[idx]; else return _data[idx]; }
 
         class Iterator : public IterBase<char> {
             size_t idx;
@@ -73,7 +73,7 @@ namespace slib {
                 idx += amt;
             }
 
-            size_t GetIndex() const {
+            size_t getIndex() const {
                 return idx;
             }
 
@@ -85,15 +85,13 @@ namespace slib {
             static RandomAccessIteratorTag Category() { return IteratorCategory{}; }
         };
 
-        Iterator Begin();
         Iterator begin();
-        Iterator End();
         Iterator end();
     private:
         bool sso;
         union {
             struct {
-                char* data;
+                char* _data;
                 size_t len;
             };
 

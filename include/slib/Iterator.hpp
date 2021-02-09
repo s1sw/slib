@@ -14,7 +14,7 @@ namespace slib {
 
     namespace detail {
         template<class iter>
-        size_t Distance(iter a, iter b, InputIteratorTag) {
+        size_t distance(iter a, iter b, InputIteratorTag) {
             size_t result = 0;
             while (a != b) {
                 ++a;
@@ -24,17 +24,17 @@ namespace slib {
         }
 
         template<typename iter>
-        size_t Distance(const iter& a, const iter& b, RandomAccessIteratorTag) {
+        size_t distance(const iter& a, const iter& b, RandomAccessIteratorTag) {
             return b - a;
         }
 
         template <typename iter>
-        void Advance(iter& it, size_t count, RandomAccessIteratorTag) {
+        void advance(iter& it, size_t count, RandomAccessIteratorTag) {
             it += count;
         }
 
         template <typename iter>
-        void Advance(iter& it, size_t count, ForwardIteratorTag) {
+        void advance(iter& it, size_t count, ForwardIteratorTag) {
             for (size_t i = 0; i < count; i++) {
                 it++;
             }
@@ -42,12 +42,12 @@ namespace slib {
     }
     
     template <typename iter>
-    size_t Distance(const iter& a, const iter& b) {
-        return detail::Distance(a, b, typename iter::Category());
+    size_t distance(const iter& a, const iter& b) {
+        return detail::distance(a, b, typename iter::Category());
     }
 
     template <typename iter>
-    void Advance(iter& it, size_t count) {
-        return detail::Advance(it, count, typename iter::Category());
+    void advance(iter& it, size_t count) {
+        return detail::advance(it, count, typename iter::Category());
     }
 }

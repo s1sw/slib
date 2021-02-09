@@ -8,9 +8,9 @@ namespace Tests {
 private:
     slib::StaticAllocList<int> makeList() {
         slib::StaticAllocList<int> l(3);
-        l.Add(1);
-        l.Add(5);
-        l.Add(7);
+        l.add(1);
+        l.add(5);
+        l.add(7);
 
         return l;
     }
@@ -19,24 +19,24 @@ public:
     TEST_METHOD(Basic) {
         slib::StaticAllocList<int> intList(3);
 
-        intList.Add(1);
-        intList.Add(2);
-        intList.Add(3);
+        intList.add(1);
+        intList.add(2);
+        intList.add(3);
 
         Assert::AreEqual(intList[0], 1);
         Assert::AreEqual(intList[1], 2);
         Assert::AreEqual(intList[2], 3);
-        Assert::AreEqual(intList.NumElements(), (size_t)3);
+        Assert::AreEqual(intList.numElements(), (size_t)3);
 
-        intList.RemoveAt(1);
+        intList.removeAt(1);
         Assert::AreEqual(intList[1], 3);
-        Assert::AreEqual(intList.NumElements(), (size_t)2);
+        Assert::AreEqual(intList.numElements(), (size_t)2);
     }
 
     TEST_METHOD(FunctionPassing) {
         auto list2 = makeList();
 
-        Assert::AreEqual((size_t)3, list2.NumElements());
+        Assert::AreEqual((size_t)3, list2.numElements());
         Assert::AreEqual(list2[1], 5);
     }
 
