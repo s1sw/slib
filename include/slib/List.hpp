@@ -71,18 +71,33 @@ namespace slib {
             actualElements -= numRemoved;
         }
 
+        void reserve(size_t minSize) {
+            if (allocatedElements >= minSize) return;
+            growTo(minSize);
+        }
+
         ~List() {
             free(data);
         }
 
         class Iterator : public IterBase<V> {
             size_t num;
-            List<V>& list;
+            List<V>* list;
 
         public:
             Iterator(List<V>& list, size_t num = 0)
                 : num(num)
-                , list(list) {
+                , list(&list) {
+            }
+
+            Iterator(const Iterator& other) 
+                : num(other.num)
+                , list(other.list) {
+            }
+
+            void operator=(const Iterator& other) {
+                list = other.list;
+                num = other.num;
             }
 
             Iterator& operator++() {
@@ -99,7 +114,7 @@ namespace slib {
 
 
             V& operator*() {
-                return list[num];
+                return (*list)[num];
             }
 
             size_t operator-(const Iterator& other) const {

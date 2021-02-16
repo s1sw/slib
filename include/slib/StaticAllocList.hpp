@@ -86,6 +86,10 @@ namespace slib {
             actualElements -= numRemoved;
         }
 
+        void clear() {
+            actualElements = 0;
+        }
+
         ~StaticAllocList() {
             if (data != nullptr)
                 free(data);
