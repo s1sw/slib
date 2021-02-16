@@ -1,6 +1,5 @@
 #pragma once
 #include "Iterator.hpp"
-#include <limits.h>
 
 namespace slib {
     class String {

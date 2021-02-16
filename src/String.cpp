@@ -3,6 +3,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#define _CRT_SECURE_NO_WARNINGS
+#ifndef _WIN32
+#define _strdup strdup
+#endif
 
 namespace slib {
     const size_t SSO_THRESHOLD = 14;
@@ -19,7 +23,7 @@ namespace slib {
 
         if (length < SSO_THRESHOLD) {
             sso = true;
-            strncpy_s(small, cStr, length);
+            strncpy(small, cStr, length);
             small[SSO_THRESHOLD - 1] = '\0';
             smallLen = length;
         } else {
@@ -118,8 +122,8 @@ namespace slib {
         char* buf = (char*)malloc(totalLength + 1);
         assert(buf);
 
-        strncpy_s(buf, totalLength + 1, data(), byteLength());
-        strncpy_s(buf + byteLength(), totalLength - byteLength() + 1, other.data(), other.byteLength());
+        strncpy(buf, data(), byteLength());
+        strncpy(buf + byteLength(), other.data(), other.byteLength());
         buf[totalLength] = '\0';
 
         return buf;
@@ -131,8 +135,8 @@ namespace slib {
         char* buf = (char*)malloc(totalLength + 1);
         assert(buf);
 
-        strncpy_s(buf, totalLength + 1, data(), byteLength());
-        strncpy_s(buf + byteLength(), totalLength - byteLength() + 1, other.data(), other.byteLength());
+        strncpy(buf, data(), byteLength());
+        strncpy(buf + byteLength(), other.data(), other.byteLength());
         buf[totalLength] = '\0';
 
         if (!sso)

@@ -2,8 +2,10 @@
 #include "../include/slib/List.hpp"
 #include "../include/slib/LinkedList.hpp"
 #include <stdio.h>
+#ifdef _WIN32
 #define _AMD64_
 #include <debugapi.h>
+#endif
 
 namespace slib {
 
@@ -38,7 +40,7 @@ namespace slib {
     }
 
     String Path::fileExtension() {
-        String::Iterator lastDot = pathStr.end();
+        auto lastDot = pathStr.end();
 
         for (auto it = pathStr.begin(); it < pathStr.end(); ++it) {
             if (*it == '.') lastDot = it;

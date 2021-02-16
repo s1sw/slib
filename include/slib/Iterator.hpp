@@ -1,4 +1,6 @@
 #pragma once
+#include <uchar.h>
+#include <stdint.h>
 
 namespace slib {
     template <typename V>
