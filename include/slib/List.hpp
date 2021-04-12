@@ -1,5 +1,6 @@
 #pragma once
 #include <cassert>
+#include <utility>
 #include "Iterator.hpp"
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +19,7 @@ namespace slib {
             growTo(initialSize);
         }
 
-        List(const List& other) 
+        List(const List& other)
             : allocIncrease(other.allocIncrease)
             , actualElements(other.actualElements)
             , allocatedElements(other.allocatedElements) {
@@ -43,7 +44,7 @@ namespace slib {
                 growTo(allocatedElements + allocIncrease);
             }
 
-            data[actualElements] = val;
+            data[actualElements] = std::move(val);
             actualElements++;
         }
 
@@ -55,6 +56,28 @@ namespace slib {
         V& operator[](size_t idx) {
             assert(idx < actualElements);
             return data[idx];
+        }
+
+        bool contains(const V& val) {
+            for (size_t i = 0; i < actualElements; i++) {
+                if (at(i) == val)
+                    return true;
+            }
+
+            return false;
+        }
+
+        void removeValue(const V& val) {
+            size_t removeIdx = ~(size_t)(0);
+            for (size_t i = 0; i < actualElements; i++) {
+                if (at(i) == val) {
+                    removeIdx = i;
+                    break;
+                }
+            }
+
+            if (removeIdx == ~(size_t)(0)) return;
+            removeAt(removeIdx);
         }
 
         void removeAt(size_t idx) {
@@ -76,6 +99,13 @@ namespace slib {
             growTo(minSize);
         }
 
+        void clear() {
+            for (V* v = data; v < data + actualElements; v++) {
+                v->~V();
+            }
+            actualElements = 0;
+        }
+
         ~List() {
             free(data);
         }
@@ -90,7 +120,7 @@ namespace slib {
                 , list(&list) {
             }
 
-            Iterator(const Iterator& other) 
+            Iterator(const Iterator& other)
                 : num(other.num)
                 , list(other.list) {
             }
