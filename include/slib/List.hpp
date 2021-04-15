@@ -1,6 +1,5 @@
 #pragma once
 #include <cassert>
-#include <utility>
 #include "Iterator.hpp"
 #include <stdlib.h>
 #include <string.h>
@@ -10,10 +9,10 @@ namespace slib {
     class List {
     public:
         List(size_t initialSize = 0, size_t allocIncrease = 16)
-            : allocIncrease(allocIncrease)
+            : data(nullptr)
             , actualElements(0)
             , allocatedElements(initialSize)
-            , data(nullptr) {
+            , allocIncrease(allocIncrease) {
             if (initialSize == 0)
                 return;
             growTo(initialSize);
@@ -44,7 +43,7 @@ namespace slib {
                 growTo(allocatedElements + allocIncrease);
             }
 
-            data[actualElements] = std::move(val);
+            data[actualElements] = val;
             actualElements++;
         }
 
@@ -81,17 +80,28 @@ namespace slib {
         }
 
         void removeAt(size_t idx) {
+            data[idx].~V();
             memcpy(data + idx, data + idx + 1, (actualElements - idx) * sizeof(V));
             actualElements--;
         }
 
         void removeFromStart(size_t numRemoved) {
+            for (size_t i = 0; i < numRemoved; i++) {
+                data[i].~V();
+            }
+
             memcpy(data, data + numRemoved, (actualElements - numRemoved) * sizeof(V));
             actualElements -= numRemoved;
         }
 
         void removeFromEnd(size_t numRemoved) {
             actualElements -= numRemoved;
+            V* start = data + actualElements - 1;
+            V* end = start + numRemoved;
+
+            for (V* v = start; v < end; v++) {
+                v->~V();
+            }
         }
 
         void reserve(size_t minSize) {
@@ -103,10 +113,15 @@ namespace slib {
             for (V* v = data; v < data + actualElements; v++) {
                 v->~V();
             }
+
             actualElements = 0;
         }
 
         ~List() {
+            for (size_t i = 0; i < actualElements; i++) {
+                data[i].~V();
+            }
+
             free(data);
         }
 
