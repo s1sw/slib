@@ -2,6 +2,7 @@
 #include <cassert>
 #include <string.h>
 #include "Iterator.hpp"
+#include <iterator>
 #include <initializer_list>
 
 namespace slib {
@@ -97,16 +98,26 @@ namespace slib {
 
         class Iterator : public IterBase<V> {
             size_t num;
-            StaticAllocList<V>& list;
+            StaticAllocList<V>* list;
 
         public:
             Iterator(StaticAllocList<V>& list, size_t num = 0)
                 : num(num)
-                , list(list) {
+                , list(&list) {
+            }
+
+            void operator=(Iterator& it) {
+                list = it.list;
+                num = it.num;
             }
 
             Iterator& operator++() {
                 num++;
+                return *this;
+            }
+
+            Iterator& operator--() {
+                num--;
                 return *this;
             }
 
@@ -118,7 +129,7 @@ namespace slib {
             bool operator< (const Iterator& other) const { return num < other.num; }
 
             V& operator*() {
-                return list[num];
+                return (*list)[num];
             }
 
             size_t operator-(const Iterator& other) const {
@@ -127,6 +138,14 @@ namespace slib {
 
             void operator+=(size_t amt) {
                 num += amt;
+            }
+
+            Iterator operator+(size_t amt) {
+                return Iterator(*list, num + amt);
+            }
+
+            Iterator operator-(size_t amt) {
+                return Iterator(*list, num - amt);
             }
 
             size_t getIndex() const {
@@ -138,6 +157,14 @@ namespace slib {
             using Pointer = V*;
             using Reference = V&;
             using IteratorCategory = RandomAccessIteratorTag;
+
+            // stl compat
+            using difference_type = size_t;
+            using value_type = V;
+            using pointer = V*;
+            using reference = V&;
+            using iterator_category = std::random_access_iterator_tag;
+
             static RandomAccessIteratorTag Category() { return IteratorCategory{}; }
         };
 
