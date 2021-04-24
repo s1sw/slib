@@ -23,6 +23,7 @@ namespace slib {
         void operator+=(const String& other);
         void operator=(const String& other);
         bool operator==(const String& other) const;
+        bool operator==(const char* str) const;
 
         char& operator[](size_t idx) const { if (sso) return (char&)small[idx]; else return _data[idx]; }
 

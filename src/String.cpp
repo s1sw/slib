@@ -181,6 +181,10 @@ namespace slib {
         return true;
     }
 
+    bool String::operator==(const char* str) const {
+        return strcmp(str, data()) == 0;
+    }
+
     String::Iterator String::begin() {
         return String::Iterator{ *this, 0 };
     }
