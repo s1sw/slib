@@ -9,7 +9,7 @@ namespace slib {
     class List {
     public:
         List(size_t initialSize = 0, size_t allocIncrease = 16)
-            : data(nullptr)
+            : _data(nullptr)
             , actualElements(0)
             , allocatedElements(initialSize)
             , allocIncrease(allocIncrease) {
@@ -22,16 +22,16 @@ namespace slib {
             : allocIncrease(other.allocIncrease)
             , actualElements(other.actualElements)
             , allocatedElements(other.allocatedElements) {
-            data = static_cast<V*>(malloc(sizeof(V) * other.allocatedElements));
-            memcpy(data, other.data, sizeof(V) * other.allocatedElements);
+            _data = static_cast<V*>(malloc(sizeof(V) * other.allocatedElements));
+            memcpy(_data, other._data, sizeof(V) * other.allocatedElements);
         }
 
         List(List&& other)
             : allocIncrease(other.allocIncrease)
             , actualElements(other.actualElements)
             , allocatedElements(other.allocatedElements)
-            , data(other.data) {
-            other.data = nullptr;
+            , _data(other._data) {
+            other._data = nullptr;
         }
 
         size_t numElements() {
@@ -43,18 +43,18 @@ namespace slib {
                 growTo(allocatedElements + allocIncrease);
             }
 
-            data[actualElements] = val;
+            _data[actualElements] = val;
             actualElements++;
         }
 
         V& at(size_t idx) {
             assert(idx < actualElements);
-            return data[idx];
+            return _data[idx];
         }
 
         V& operator[](size_t idx) {
             assert(idx < actualElements);
-            return data[idx];
+            return _data[idx];
         }
 
         bool contains(const V& val) {
@@ -80,23 +80,23 @@ namespace slib {
         }
 
         void removeAt(size_t idx) {
-            data[idx].~V();
-            memcpy(data + idx, data + idx + 1, (actualElements - idx) * sizeof(V));
+            _data[idx].~V();
+            memcpy(_data + idx, _data + idx + 1, (actualElements - idx) * sizeof(V));
             actualElements--;
         }
 
         void removeFromStart(size_t numRemoved) {
             for (size_t i = 0; i < numRemoved; i++) {
-                data[i].~V();
+                _data[i].~V();
             }
 
-            memcpy(data, data + numRemoved, (actualElements - numRemoved) * sizeof(V));
+            memcpy(_data, _data + numRemoved, (actualElements - numRemoved) * sizeof(V));
             actualElements -= numRemoved;
         }
 
         void removeFromEnd(size_t numRemoved) {
             actualElements -= numRemoved;
-            V* start = data + actualElements - 1;
+            V* start = _data + actualElements - 1;
             V* end = start + numRemoved;
 
             for (V* v = start; v < end; v++) {
@@ -110,19 +110,23 @@ namespace slib {
         }
 
         void clear() {
-            for (V* v = data; v < data + actualElements; v++) {
+            for (V* v = _data; v < _data + actualElements; v++) {
                 v->~V();
             }
 
             actualElements = 0;
         }
 
+        V* data() {
+            return _data;
+        }
+
         ~List() {
             for (size_t i = 0; i < actualElements; i++) {
-                data[i].~V();
+                _data[i].~V();
             }
 
-            free(data);
+            free(_data);
         }
 
         class Iterator : public IterBase<V> {
@@ -188,16 +192,16 @@ namespace slib {
         void growTo(size_t targetElements) {
             V* newData = static_cast<V*>(malloc(sizeof(V) * targetElements));
 
-            if (data != nullptr) {
-                memcpy(newData, data, actualElements * sizeof(V));
-                free(data);
+            if (_data != nullptr) {
+                memcpy(newData, _data, actualElements * sizeof(V));
+                free(_data);
             }
 
-            data = newData;
+            _data = newData;
             allocatedElements = targetElements;
         }
 
-        V* data;
+        V* _data;
         size_t actualElements;
         size_t allocatedElements;
         size_t allocIncrease;

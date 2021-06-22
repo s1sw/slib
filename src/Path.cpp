@@ -18,6 +18,7 @@ namespace slib {
     }
 
     Path::Path(String pathStr) : pathStr(pathStr) {}
+    Path::Path(const Path& other) : pathStr(other.pathStr) {}
 
     bool Path::isAbsolute() const {
 #ifdef _WIN32

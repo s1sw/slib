@@ -9,6 +9,79 @@ namespace slib {
     template <class V>
     class StaticAllocList {
     public:
+        class Iterator : public IterBase<V> {
+            size_t num;
+            StaticAllocList<V>* list;
+
+        public:
+            Iterator(StaticAllocList<V>& list, size_t num = 0)
+                : num(num)
+                , list(&list) {
+            }
+
+            Iterator& operator=(const Iterator& it) {
+                list = it.list;
+                num = it.num;
+                return *this;
+            }
+
+            Iterator& operator++() {
+                num++;
+                return *this;
+            }
+
+            Iterator& operator--() {
+                num--;
+                return *this;
+            }
+
+            bool operator==(const Iterator& other) const { return num == other.num; }
+            bool operator!=(const Iterator& other) const { return num != other.num; }
+            bool operator>=(const Iterator& other) const { return num >= other.num; }
+            bool operator> (const Iterator& other) const { return num > other.num; }
+            bool operator<=(const Iterator& other) const { return num <= other.num; }
+            bool operator< (const Iterator& other) const { return num < other.num; }
+
+            V& operator*() const {
+                return (*list)[num];
+            }
+
+            size_t operator-(const Iterator& other) const {
+                return num - other.num;
+            }
+
+            void operator+=(size_t amt) {
+                num += amt;
+            }
+
+            Iterator operator+(size_t amt) {
+                return Iterator(*list, num + amt);
+            }
+
+            Iterator operator-(size_t amt) {
+                return Iterator(*list, num - amt);
+            }
+
+            size_t getIndex() const {
+                return num;
+            }
+
+            using DifferenceType = size_t;
+            using ValueType = V;
+            using Pointer = V*;
+            using Reference = V&;
+            using IteratorCategory = RandomAccessIteratorTag;
+
+            // stl compat
+            using difference_type = size_t;
+            using value_type = V;
+            using pointer = V*;
+            using reference = V&;
+            using iterator_category = std::random_access_iterator_tag;
+
+            static RandomAccessIteratorTag Category() { return IteratorCategory{}; }
+        };
+
         StaticAllocList(size_t maxElements)
             : maxElements(maxElements)
             , actualElements(0)
@@ -73,6 +146,11 @@ namespace slib {
             actualElements++;
         }
 
+        void removeRange(size_t start, size_t end) {
+            memcpy(data + start, data + end, (actualElements - end) * sizeof(V));
+            actualElements -= end - start;
+        }
+
         void removeAt(size_t idx) {
             memcpy(data + idx, data + idx + 1, (actualElements - idx) * sizeof(V));
             actualElements--;
@@ -87,6 +165,10 @@ namespace slib {
             actualElements -= numRemoved;
         }
 
+        void erase(const Iterator& begin, const Iterator& end) {
+            removeRange(begin.getIndex(), end.getIndex());
+        }
+
         void clear() {
             actualElements = 0;
         }
@@ -95,78 +177,6 @@ namespace slib {
             if (data != nullptr)
                 free(data);
         }
-
-        class Iterator : public IterBase<V> {
-            size_t num;
-            StaticAllocList<V>* list;
-
-        public:
-            Iterator(StaticAllocList<V>& list, size_t num = 0)
-                : num(num)
-                , list(&list) {
-            }
-
-            void operator=(Iterator& it) {
-                list = it.list;
-                num = it.num;
-            }
-
-            Iterator& operator++() {
-                num++;
-                return *this;
-            }
-
-            Iterator& operator--() {
-                num--;
-                return *this;
-            }
-
-            bool operator==(const Iterator& other) const { return num == other.num; }
-            bool operator!=(const Iterator& other) const { return num != other.num; }
-            bool operator>=(const Iterator& other) const { return num >= other.num; }
-            bool operator> (const Iterator& other) const { return num > other.num; }
-            bool operator<=(const Iterator& other) const { return num <= other.num; }
-            bool operator< (const Iterator& other) const { return num < other.num; }
-
-            V& operator*() {
-                return (*list)[num];
-            }
-
-            size_t operator-(const Iterator& other) const {
-                return num - other.num;
-            }
-
-            void operator+=(size_t amt) {
-                num += amt;
-            }
-
-            Iterator operator+(size_t amt) {
-                return Iterator(*list, num + amt);
-            }
-
-            Iterator operator-(size_t amt) {
-                return Iterator(*list, num - amt);
-            }
-
-            size_t getIndex() const {
-                return num;
-            }
-
-            using DifferenceType = size_t;
-            using ValueType = V;
-            using Pointer = V*;
-            using Reference = V&;
-            using IteratorCategory = RandomAccessIteratorTag;
-
-            // stl compat
-            using difference_type = size_t;
-            using value_type = V;
-            using pointer = V*;
-            using reference = V&;
-            using iterator_category = std::random_access_iterator_tag;
-
-            static RandomAccessIteratorTag Category() { return IteratorCategory{}; }
-        };
 
         Iterator begin() { return Iterator(*this); }
         Iterator end() { return Iterator(*this, actualElements); }

@@ -12,7 +12,7 @@ namespace slib {
         HeapArray(size_t numElements) : numElements(numElements) {
             data = (T*)malloc(sizeof(T) * numElements);
             for (size_t i = 0; i < numElements; i++) {
-                data[i] = new (&data[i]) T; // placement new go brrr
+                new (&data[i]) T; // placement new go brrr
             }
         }
 
@@ -21,7 +21,7 @@ namespace slib {
             data = (T*)malloc(sizeof(T) * numElements);
 
             for (size_t i = 0; i < numElements; i++) {
-                data[i] = new (&data[i]) T{other.data[i]}; // placement new go brrr
+                new (&data[i]) T{other.data[i]}; // placement new go brrr
             }
         }
 
@@ -35,6 +35,8 @@ namespace slib {
             assert(idx < numElements);
             return data[idx];
         }
+
+        size_t size() const { return numElements; }
 
         class Iterator : public IterBase<T> {
             size_t num;
@@ -115,7 +117,7 @@ namespace slib {
             free(data);
         }
     private:
-        T const* data;
+        T* data;
         const size_t numElements;
     };
 }
