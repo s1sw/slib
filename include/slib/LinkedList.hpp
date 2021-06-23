@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 namespace slib {
     template <typename V>
     struct LinkedListElement {
@@ -38,7 +39,7 @@ namespace slib {
             return newEl;
         }
 
-        void Remove(size_t idx) {
+        void remove(size_t idx) {
             Element* toRemove = head;
             for (size_t i = 0; i < idx; i++) {
                 toRemove = toRemove->next;
@@ -54,7 +55,7 @@ namespace slib {
             delete toRemove;
         }
 
-        void Remove(Element* toRemove) {
+        void remove(Element* toRemove) {
             if (toRemove->next) {
 
                 if (toRemove->prev == nullptr) {
@@ -81,7 +82,7 @@ namespace slib {
             return el;
         }
 
-        size_t GetIndexFor(Element* elPtr) {
+        size_t getIndexFor(Element* elPtr) {
             size_t counter = 0;
 
             Element* next = head;
@@ -104,10 +105,10 @@ namespace slib {
             }
         }
 
-        Element* First() {
+        Element* first() {
             return head;
         }
     private:
-        Element* head;
+        Element* head = nullptr;
     };
 }

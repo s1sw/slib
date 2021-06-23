@@ -6,6 +6,7 @@
 #include <iterator>
 
 namespace slib {
+    // Fixed-size container allocated on construction and freed on destruction.
     template <typename T>
     class HeapArray {
     public:

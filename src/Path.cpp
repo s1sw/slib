@@ -70,7 +70,6 @@ namespace slib {
         // Empty path is already normalized
         if (pathStr.empty()) return;
 
-        bool hasRootDrive = pathStr[1] == ':' && isSeparator(pathStr[2]);
 
         // Build a linked list of path elements for easy removal
         LinkedList<String> elements;
@@ -95,7 +94,7 @@ namespace slib {
         // Go through the path's linked list form and remove unnecessary parts
         // (i.e. '.'s and 'blah/..')
         {
-            Element* next = elements.First();
+            Element* next = elements.first();
             while (next != nullptr) {
                 Element* c = next;
 
@@ -103,7 +102,7 @@ namespace slib {
 
                 // Remove "."
                 if (c->v == ".") {
-                    elements.Remove(c);
+                    elements.remove(c);
                     continue;
                 }
 
@@ -112,8 +111,8 @@ namespace slib {
                     Element* a = c;
                     Element* b = c->prev;
 
-                    elements.Remove(a);
-                    elements.Remove(b);
+                    elements.remove(a);
+                    elements.remove(b);
                 }
             }
         }
@@ -125,11 +124,7 @@ namespace slib {
         if (isSeparator(pathStr[0]))
             newPath += '/';
 
-        /*if (hasRootDrive) {
-            newPath = pathStr.substring(0, 2) + "/";
-        }*/
-
-        Element* next = elements.First();
+        Element* next = elements.first();
         while (next != nullptr) {
             Element* c = next;
 

@@ -6,6 +6,7 @@
 #include <initializer_list>
 
 namespace slib {
+    // "Dynamically sized" but with a maximum size. Only makes one allocation.
     template <class V>
     class StaticAllocList {
     public:
@@ -95,7 +96,7 @@ namespace slib {
             , actualElements(N)
             , data(nullptr) {
             assert(N <= maxElements && "Cannot have a StaticAllocList with more initial elements than its maximum");
-            data = static_cast<V*>(malloc(sizeof(V) * maxElements));
+            data = new V[maxElements];
 
             size_t i = 0;
             for (auto& val : list) {
@@ -108,8 +109,11 @@ namespace slib {
             : actualElements(other.actualElements)
             , maxElements(other.maxElements)
             , data(nullptr) {
-            data = static_cast<V*>(malloc(sizeof(V) * other.maxElements));
-            memcpy(data, other.data, sizeof(V) * other.maxElements);
+            data = new V[maxElements];
+
+            for (size_t i = 0; i < other.actualElements; i++) {
+                data[i] = other.data[i];
+            }
         }
 
         StaticAllocList(StaticAllocList&& other) noexcept
@@ -147,21 +151,34 @@ namespace slib {
         }
 
         void removeRange(size_t start, size_t end) {
+            for (size_t i = start; i < end; i++) {
+                data[i].~V();
+            }
+
             memcpy(data + start, data + end, (actualElements - end) * sizeof(V));
             actualElements -= end - start;
         }
 
         void removeAt(size_t idx) {
+            data[idx].~V();
             memcpy(data + idx, data + idx + 1, (actualElements - idx) * sizeof(V));
             actualElements--;
         }
 
         void removeFromStart(size_t numRemoved) {
+            for (size_t i = 0; i < numRemoved; i++) {
+                data[i].~V();
+            }
+
             memcpy(data, data + numRemoved, (actualElements - numRemoved) * sizeof(V));
             actualElements -= numRemoved;
         }
 
         void removeFromEnd(size_t numRemoved) {
+            for (size_t i = actualElements - numRemoved - 1; i < actualElements; i++) {
+                data[i].~V();
+            }
+
             actualElements -= numRemoved;
         }
 
@@ -175,7 +192,7 @@ namespace slib {
 
         ~StaticAllocList() {
             if (data != nullptr)
-                free(data);
+                delete[] data;
         }
 
         Iterator begin() { return Iterator(*this); }

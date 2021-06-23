@@ -49,12 +49,12 @@ namespace slib {
                 return *this;
             }
 
-            bool operator==(const Iterator& other) { return idx == other.idx; }
-            bool operator!=(const Iterator& other) { return idx != other.idx; }
-            bool operator>=(const Iterator& other) { return idx >= other.idx; }
-            bool operator>(const Iterator& other) { return idx > other.idx; }
-            bool operator<=(const Iterator& other) { return idx <= other.idx; }
-            bool operator<(const Iterator& other) { return idx < other.idx; }
+            bool operator==(const Iterator& other) const { return idx == other.idx; }
+            bool operator!=(const Iterator& other) const { return idx != other.idx; }
+            bool operator>=(const Iterator& other) const { return idx >= other.idx; }
+            bool operator>(const Iterator& other) const { return idx > other.idx; }
+            bool operator<=(const Iterator& other) const { return idx <= other.idx; }
+            bool operator<(const Iterator& other) const { return idx < other.idx; }
 
             void operator=(const Iterator& other) {
                 idx = other.idx;

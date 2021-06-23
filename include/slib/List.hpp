@@ -5,6 +5,7 @@
 #include <string.h>
 
 namespace slib {
+    // Dynamically sized container.
     template <class V>
     class List {
     public:
@@ -19,11 +20,14 @@ namespace slib {
         }
 
         List(const List& other)
-            : allocIncrease(other.allocIncrease)
-            , actualElements(other.actualElements)
-            , allocatedElements(other.allocatedElements) {
-            _data = static_cast<V*>(malloc(sizeof(V) * other.allocatedElements));
-            memcpy(_data, other._data, sizeof(V) * other.allocatedElements);
+            : actualElements(other.actualElements)
+            , allocatedElements(other.allocatedElements)
+            , allocIncrease(other.allocIncrease) {
+            _data = new V[other.allocatedElements];
+
+            for (size_t i = 0; i < other.actualElements; i++) {
+                _data[i] = other._data[i];
+            }
         }
 
         List(List&& other)
@@ -190,7 +194,7 @@ namespace slib {
         Iterator end() { return Iterator(*this, actualElements); }
     private:
         void growTo(size_t targetElements) {
-            V* newData = static_cast<V*>(malloc(sizeof(V) * targetElements));
+            V* newData = new V[targetElements];
 
             if (_data != nullptr) {
                 memcpy(newData, _data, actualElements * sizeof(V));

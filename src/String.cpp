@@ -23,7 +23,7 @@ namespace slib {
 
         if (length < SSO_THRESHOLD) {
             sso = true;
-            strncpy(small, cStr, length);
+            strncpy(small, cStr, length + 1);
             small[SSO_THRESHOLD - 1] = '\0';
             smallLen = length;
         } else {
