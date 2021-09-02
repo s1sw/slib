@@ -1,7 +1,8 @@
 slib_src = [
   'Path.cpp',
   'String.cpp',
-  'BufferReader.cpp'
+  'BufferReader.cpp',
+  'Win32Util.cpp'
 ]
 
 slib_inc = include_directories('../include')
