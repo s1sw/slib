@@ -144,6 +144,7 @@
     <ClInclude Include="../include/slib/List.hpp" />
     <ClInclude Include="../include/slib/StaticAllocList.hpp" />
     <ClInclude Include="..\include\slib\BinaryTree.hpp" />
+    <ClInclude Include="..\include\slib\DynamicLibrary.hpp" />
     <ClInclude Include="..\include\slib\Intrinsic.hpp" />
     <ClInclude Include="..\include\slib\LinkedList.hpp" />
     <ClInclude Include="..\include\slib\MinMax.hpp" />
@@ -152,6 +153,8 @@
     <ClInclude Include="..\include\slib\Win32Util.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\DynamicLibraryLinux.cpp" />
+    <ClCompile Include="..\src\DynamicLibraryWin32.cpp" />
     <ClCompile Include="..\src\Path.cpp" />
     <ClCompile Include="..\src\String.cpp" />
     <ClCompile Include="..\src\Win32Util.cpp" />

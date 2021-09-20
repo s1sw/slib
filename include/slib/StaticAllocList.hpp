@@ -129,6 +129,10 @@ namespace slib {
         size_t numElements() const {
             return actualElements;
         }
+        
+        size_t max() const {
+            return maxElements;
+        }
 
         V& at(size_t idx) {
             assert(idx < actualElements);
