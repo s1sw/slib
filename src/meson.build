@@ -2,7 +2,9 @@ slib_src = [
   'Path.cpp',
   'String.cpp',
   'BufferReader.cpp',
-  'Win32Util.cpp'
+  'Win32Util.cpp',
+  'DynamicLibraryLinux.cpp',
+  'DynamicLibraryWin32.cpp'
 ]
 
 slib_inc = include_directories('../include')
