@@ -5,7 +5,7 @@
 #endif
 
 namespace slib {
-    static class Intrinsics {
+    class Intrinsics {
     public:
 #if defined(_MSC_VER)
         static uint32_t bitScanForward(uint32_t value) {
