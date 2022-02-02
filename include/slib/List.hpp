@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <utility>
+#include <iterator>
 
 namespace slib {
     // Dynamically sized container.
@@ -64,6 +65,12 @@ namespace slib {
             using Pointer = V*;
             using Reference = V&;
             using IteratorCategory = RandomAccessIteratorTag;
+
+            using difference_type = size_t;
+            using value_type = V;
+            using pointer = V*;
+            using reference = V&;
+            using iterator_category = std::random_access_iterator_tag;
             static RandomAccessIteratorTag Category() { return IteratorCategory{}; }
         };
 
@@ -215,10 +222,15 @@ namespace slib {
         void growTo(size_t targetElements) {
             V* newData = new V[targetElements];
 
-            if (_data != nullptr) {
+            if constexpr (std::is_trivially_copyable_v<V>) {
                 memcpy(newData, _data, actualElements * sizeof(V));
-                free(_data);
+            } else {
+                for (size_t i = 0; i < actualElements; i++) {
+                    newData[i] = std::move(_data[i]);
+                }
             }
+
+            free(_data);
 
             _data = newData;
             allocatedElements = targetElements;
