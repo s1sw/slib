@@ -11,6 +11,20 @@
 namespace slib {
     const size_t SSO_THRESHOLD = 14;
 
+    StringView::StringView(const char* cString) {
+        ptr = cString;
+        len = strlen(cString);
+    }
+
+    StringView::StringView(const char* data, size_t len)
+        : ptr(data)
+        , len(len) {}
+
+    StringView::StringView(const String& str) {
+        ptr = str.data();
+        len = str.byteLength();
+    }
+
     String::String(char c) {
         sso = true;
         smallLen = 1;
@@ -21,6 +35,19 @@ namespace slib {
     String::String(const char* cStr) {
         size_t length = strlen(cStr);
 
+        if (length < SSO_THRESHOLD) {
+            sso = true;
+            strncpy(small, cStr, length + 1);
+            small[SSO_THRESHOLD - 1] = '\0';
+            smallLen = length;
+        } else {
+            sso = false;
+            _data = _strdup(cStr);
+            len = length;
+        }
+    }
+
+    String::String(const char* cStr, size_t length) {
         if (length < SSO_THRESHOLD) {
             sso = true;
             strncpy(small, cStr, length + 1);
@@ -114,6 +141,39 @@ namespace slib {
         sso = true;
         smallLen = 0;
         memset(small, 0, SSO_THRESHOLD);
+    }
+
+    void String::resize(size_t newSize) {
+        if (newSize >= SSO_THRESHOLD) {
+            char* buf = (char*)malloc(newSize + 1);
+            buf[newSize] = 0;
+            if (byteLength() <= newSize)
+                memcpy(buf, data(), byteLength());
+            else
+                memcpy(buf, data(), newSize);
+
+            if (sso) {
+                sso = false;
+                _data = buf;
+                len = newSize;
+            } else {
+                _data = buf;
+                len = newSize;
+            }
+        } else {
+            char buf[14];
+            if (byteLength() <= newSize)
+                memcpy(buf, data(), byteLength());
+            else
+                memcpy(buf, data(), newSize);
+            buf[newSize] = 0;
+
+            sso = true;
+            smallLen = newSize;
+            for (size_t i = 0; i < newSize + 1; i++) {
+                small[i] = buf[i];
+            }
+        }
     }
 
     String String::operator+(const String& other) const {

@@ -4,11 +4,12 @@
 namespace slib {
     class String {
     public:
+        String();
         String(char c);
         String(const char* cStr);
+        String(const char* dat, size_t length);
         String(const String& other);
         String(String&& other);
-        String();
 
         char* data() const { return sso ? (char*)small : _data; }
         const char* cStr() const { return sso ? small : _data; }
@@ -18,6 +19,7 @@ namespace slib {
         bool contains(char c) const;
         String substring(size_t index, size_t count = SIZE_MAX);
         void clear();
+        void resize(size_t newSize);
 
         String operator+(const String& other) const;
         void operator+=(const String& other);
@@ -100,5 +102,17 @@ namespace slib {
                 char small[14];
             };
         };
+    };
+
+    class StringView {
+    public:
+        StringView(const char* cString);
+        StringView(const char* data, size_t len);
+        StringView(const String& str);
+        size_t byteLength() const;
+        char* data() const;
+    private:
+        const char* ptr;
+        size_t len;
     };
 }
