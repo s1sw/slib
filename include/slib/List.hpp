@@ -96,11 +96,20 @@ namespace slib {
         }
 
         List(List&& other)
-            : allocIncrease(other.allocIncrease)
-            , actualElements(other.actualElements)
+            : actualElements(other.actualElements)
             , allocatedElements(other.allocatedElements)
+            , allocIncrease(other.allocIncrease)
             , _data(other._data) {
             other._data = nullptr;
+        }
+
+        List& operator=(List&& other) {
+            allocIncrease = other.allocIncrease;
+            actualElements = other.actualElements;
+            allocatedElements = other.allocatedElements;
+            _data = other._data;
+            other._data = nullptr;
+            return *this;
         }
 
         size_t numElements() {
