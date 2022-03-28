@@ -18,5 +18,13 @@ namespace slib {
             return __builtin_ctz(value);
         }
 #endif
+
+        static uint8_t countBits(uint32_t value) {
+#if defined(_MSC_VER)
+            return __popcnt(value);
+#elif defined(__GNUC__)
+            return __builtin_popcount(value);
+#endif
+        }
     };
 }

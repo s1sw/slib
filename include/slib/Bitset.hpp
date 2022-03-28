@@ -1,6 +1,7 @@
 #pragma once
 #include <stddef.h>
 #include <stdint.h>
+#include "Intrinsic.hpp"
 
 namespace slib {
     template <const size_t numBits>
@@ -12,7 +13,7 @@ namespace slib {
             size_t index;
             BitsetRef(Bitset<numBits>& set, size_t index) : set(set), index(index) {}
         public:
-            operator bool() {
+            operator bool() const {
                 return set.get(index);
             }
 
@@ -28,7 +29,7 @@ namespace slib {
             }
         }
 
-        bool get(size_t idx) {
+        bool get(size_t idx) const {
             size_t dataIdx = idx / typeBits;
             size_t bitIdx = idx % typeBits;
             return (bool)((data[dataIdx] >> bitIdx) & 1);
@@ -44,8 +45,22 @@ namespace slib {
             data[dataIdx] = (currentVal & mask) | (value << bitIdx);
         }
 
+        size_t count() {
+            size_t sum = 0;
+
+            for (int i = 0; i < numBytes; i++) {
+                sum += Intrinsics::countBits(data[i]);
+            }
+
+            return sum;
+        }
+
         BitsetRef operator[](size_t idx) {
             return BitsetRef(*this, idx);
+        }
+
+        bool operator[](size_t idx) const {
+            return get(idx);
         }
     private:
         using DataType = uint8_t;
