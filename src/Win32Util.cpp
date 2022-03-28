@@ -1,6 +1,6 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#include <windows.h>
 #include "../include/slib/Win32Util.hpp"
 
 namespace slib {
