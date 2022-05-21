@@ -4,7 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <utility>
-#include <iterator>
+#include <initializer_list>
+#include <new>
+
+namespace std {
+    struct input_iterator_tag;
+    struct output_iterator_tag;
+    struct forward_iterator_tag;
+    struct bidirectional_iterator_tag;
+    struct random_access_iterator_tag;
+}
 
 namespace slib {
     // Dynamically sized container.
@@ -103,6 +112,21 @@ namespace slib {
             other._data = nullptr;
         }
 
+        template<size_t N>
+        List(const V(&list)[N])
+            : actualElements(N)
+            , _data(nullptr)
+        {
+            growTo(N);
+
+            size_t i = 0;
+            for (auto& val : list)
+            {
+                _data[i] = val;
+                i++;
+            }
+        }
+
         List& operator=(List&& other) {
             allocIncrease = other.allocIncrease;
             actualElements = other.actualElements;
@@ -125,7 +149,7 @@ namespace slib {
             actualElements++;
         }
 
-        void add(V& val) {
+        void add(const V& val) {
             if (actualElements == allocatedElements) {
                 growTo(allocatedElements + allocIncrease);
             }
@@ -205,6 +229,15 @@ namespace slib {
             growTo(minSize);
         }
 
+        void resize(size_t size) {
+            if (size < actualElements) {
+                removeFromEnd(actualElements - size);
+            } else {
+                growTo(size);
+                actualElements = size;
+            }
+        }
+
         void clear() {
             for (V* v = _data; v < _data + actualElements; v++) {
                 v->~V();
@@ -229,17 +262,21 @@ namespace slib {
         Iterator end() const { return Iterator(*this, actualElements); }
     private:
         void growTo(size_t targetElements) {
+            assert(targetElements > 0);
             V* newData = new V[targetElements];
 
-            if constexpr (std::is_trivially_copyable_v<V>) {
-                memcpy(newData, _data, actualElements * sizeof(V));
-            } else {
-                for (size_t i = 0; i < actualElements; i++) {
-                    newData[i] = std::move(_data[i]);
+            if (_data) {
+                if constexpr (std::is_trivially_copyable_v<V>) {
+                    memcpy(newData, _data, actualElements * sizeof(V));
                 }
-            }
+                else {
+                    for (size_t i = 0; i < actualElements; i++) {
+                        newData[i] = std::move(_data[i]);
+                    }
+                }
 
-            free(_data);
+                delete[] _data;
+            }
 
             _data = newData;
             allocatedElements = targetElements;
