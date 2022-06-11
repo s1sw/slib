@@ -22,6 +22,20 @@ namespace slib {
         attached = true;
     }
 
+    Subprocess::Subprocess(const String& commandLine, const String& workingDirectory) {
+        STARTUPINFOA si{};
+        si.cb = sizeof(si);
+
+        SubprocessNativeWin32* sn = new SubprocessNativeWin32;
+        sn->processInfo = PROCESS_INFORMATION{};
+        nativeHandle = sn;
+
+        char* cmdline = _strdup(commandLine.cStr());
+        CreateProcessA(nullptr, cmdline, nullptr, nullptr, FALSE, 0, nullptr, workingDirectory.cStr(), &si, &sn->processInfo);
+        free((void*)cmdline);
+        attached = true;
+    }
+
     void Subprocess::waitForFinish() {
         SubprocessNativeWin32* sn = reinterpret_cast<SubprocessNativeWin32*>(nativeHandle);
         WaitForSingleObject(sn->processInfo.hProcess, INFINITE);

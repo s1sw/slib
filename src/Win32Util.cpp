@@ -1,7 +1,9 @@
 #ifdef _WIN32
+#include "../include/slib/Win32Util.hpp"
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "../include/slib/Win32Util.hpp"
+#include <shobjidl.h>
 #include <winrt/base.h>
 namespace winrt::impl
 {
@@ -23,6 +25,83 @@ namespace slib {
             if (isPresent)
                 callback(driveLetters[i], data);
         }
+    }
+
+    slib::String Win32Util::openFolder() {
+        IFileDialog* dialog = nullptr;
+
+        HRESULT result = CoCreateInstance(
+            CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER,
+            IID_PPV_ARGS(&dialog)
+        );
+
+        DWORD flags;
+        result = dialog->GetOptions(&flags);
+
+        dialog->SetOptions(flags | FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM);
+        dialog->Show(nullptr);
+
+        IShellItem* shellResult;
+        result = dialog->GetResult(&shellResult);
+
+        if (FAILED(result)) {
+            return "";
+        }
+
+        PWSTR pszFilePath = nullptr;
+        shellResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+        int size = WideCharToMultiByte(CP_UTF8, 0, pszFilePath, -1, nullptr, 0, nullptr, nullptr);
+
+        slib::String path;
+        path.resize(size);
+
+        WideCharToMultiByte(CP_UTF8, 0, pszFilePath, -1, path.data(), path.byteLength(), nullptr, nullptr);
+
+        CoTaskMemFree(pszFilePath);
+
+        return path;
+    }
+
+    const COMDLG_FILTERSPEC fileTypes[] =
+    {
+        {L"All Files (*.*)", L"*.*"}
+    };
+
+    slib::String Win32Util::openFile(const slib::String& extension) {
+        IFileDialog* dialog = nullptr;
+
+        HRESULT result = CoCreateInstance(
+            CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER,
+            IID_PPV_ARGS(&dialog)
+        );
+
+        DWORD flags;
+        result = dialog->GetOptions(&flags);
+
+        dialog->SetOptions(flags | FOS_FORCEFILESYSTEM);
+        dialog->Show(nullptr);
+
+        IShellItem* shellResult;
+        result = dialog->GetResult(&shellResult);
+
+        if (FAILED(result)) {
+            return "";
+        }
+
+        PWSTR pszFilePath = nullptr;
+        shellResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+        int size = WideCharToMultiByte(CP_UTF8, 0, pszFilePath, -1, nullptr, 0, nullptr, nullptr);
+
+        slib::String path;
+        path.resize(size);
+
+        WideCharToMultiByte(CP_UTF8, 0, pszFilePath, -1, path.data(), path.byteLength(), nullptr, nullptr);
+
+        CoTaskMemFree(pszFilePath);
+
+        return path;
     }
 
     bool Win32Util::isFileHidden(const char* path) {

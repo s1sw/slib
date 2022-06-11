@@ -2,20 +2,31 @@
 #include <cassert>
 #include <string.h>
 #include "Iterator.hpp"
-#include <iterator>
 #include <initializer_list>
 
+namespace std {
+    struct input_iterator_tag;
+
+    struct output_iterator_tag;
+
+    struct forward_iterator_tag;
+
+    struct bidirectional_iterator_tag;
+
+    struct random_access_iterator_tag;
+}
+
 namespace slib {
-    // "Dynamically sized" but with a maximum size. Only makes one allocation.
-    template <class V>
-    class StaticAllocList {
+    // "Dynamically sized" but with a maximum size.
+    template <class V, size_t maxElements>
+    class ArrayList {
     public:
         class Iterator : public IterBase<V> {
             size_t num;
-            StaticAllocList<V>* list;
+            ArrayList<V, maxElements>* list;
 
         public:
-            Iterator(StaticAllocList<V>& list, size_t num = 0)
+            Iterator(ArrayList<V, maxElements>& list, size_t num = 0)
                 : num(num)
                 , list(&list) {
             }
@@ -83,20 +94,14 @@ namespace slib {
             static RandomAccessIteratorTag Category() { return IteratorCategory{}; }
         };
 
-        StaticAllocList(size_t maxElements)
-            : maxElements(maxElements)
-            , actualElements(0)
-            , data(nullptr) {
-            data = new V[maxElements];
+        ArrayList()
+            : actualElements(0) {
         }
 
         template<size_t N>
-        StaticAllocList(size_t maxElements, const V(&list)[N])
-            : maxElements(maxElements)
-            , actualElements(N)
-            , data(nullptr) {
-            assert(N <= maxElements && "Cannot have a StaticAllocList with more initial elements than its maximum");
-            data = new V[maxElements];
+        ArrayList(size_t maxElements, const V(&list)[N])
+            : actualElements(N) {
+            static_assert(N <= maxElements && "Cannot have a StaticAllocList with more initial elements than its maximum");
 
             size_t i = 0;
             for (auto& val : list) {
@@ -105,25 +110,18 @@ namespace slib {
             }
         }
 
-        StaticAllocList(const StaticAllocList& other) noexcept
-            : actualElements(other.actualElements)
-            , maxElements(other.maxElements)
-            , data(nullptr) {
-            data = new V[maxElements];
-
+        ArrayList(const ArrayList& other) noexcept
+            : actualElements(other.actualElements) {
             for (size_t i = 0; i < other.actualElements; i++) {
                 data[i] = other.data[i];
             }
         }
 
-        StaticAllocList(StaticAllocList&& other) noexcept
-            : data(other.data)
-            , maxElements(other.maxElements)
-            , actualElements(other.actualElements){
-            data = other.data;
-            maxElements = other.maxElements;
-            actualElements = other.actualElements;
-            other.data = nullptr;
+        ArrayList(ArrayList&& other) noexcept
+            : actualElements(other.actualElements){
+            for (size_t i = 0; i < other.actualElements; i++) {
+                data[i] = static_cast<V&&>(other.data[i]);
+            }
         }
 
         size_t numElements() const {
@@ -194,17 +192,14 @@ namespace slib {
             actualElements = 0;
         }
 
-        ~StaticAllocList() {
-            if (data != nullptr)
-                delete[] data;
+        ~ArrayList() {
         }
 
         Iterator begin() { return Iterator(*this); }
         Iterator end() { return Iterator(*this, actualElements); }
 
     private:
-        size_t maxElements;
         size_t actualElements;
-        V* data;
+        V data[maxElements];
     };
 }

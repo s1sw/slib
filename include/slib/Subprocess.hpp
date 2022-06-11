@@ -5,6 +5,7 @@ namespace slib {
     class Subprocess {
     public:
         Subprocess(const slib::String& commandLine);
+        Subprocess(const slib::String& commandLine, const slib::String& workingDirectory);
         void waitForFinish();
         void detach();
         void kill();
