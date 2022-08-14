@@ -10,10 +10,7 @@ namespace slib {
         PROCESS_INFORMATION processInfo;
     };
 
-    Subprocess::Subprocess(const String& commandLine) {
-        STARTUPINFOA si{};
-        si.cb = sizeof(si);
-
+    void createJobObjectIfNecessary() {
         if (jobObject != nullptr) {
             jobObject = CreateJobObjectA(nullptr, "Subprocess Job Object");
             JOBOBJECT_BASIC_LIMIT_INFORMATION info{};
@@ -24,6 +21,13 @@ namespace slib {
 
             SetInformationJobObject(jobObject, JobObjectExtendedLimitInformation, &extendedInfo, sizeof(extendedInfo));
         }
+    }
+
+    Subprocess::Subprocess(const String& commandLine) {
+        STARTUPINFOA si{};
+        si.cb = sizeof(si);
+
+        createJobObjectIfNecessary();
 
         SubprocessNativeWin32* sn = new SubprocessNativeWin32;
         sn->processInfo = PROCESS_INFORMATION{};
@@ -40,12 +44,15 @@ namespace slib {
         STARTUPINFOA si{};
         si.cb = sizeof(si);
 
+        createJobObjectIfNecessary();
+
         SubprocessNativeWin32* sn = new SubprocessNativeWin32;
         sn->processInfo = PROCESS_INFORMATION{};
         nativeHandle = sn;
 
         char* cmdline = _strdup(commandLine.cStr());
         CreateProcessA(nullptr, cmdline, nullptr, nullptr, FALSE, 0, nullptr, workingDirectory.cStr(), &si, &sn->processInfo);
+        AssignProcessToJobObject(jobObject, sn->processInfo.hProcess);
         free((void*)cmdline);
         attached = true;
     }
