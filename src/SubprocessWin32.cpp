@@ -4,6 +4,8 @@
 #include <stdlib.h>
 
 namespace slib {
+    HANDLE jobObject;
+
     struct SubprocessNativeWin32 {
         PROCESS_INFORMATION processInfo;
     };
@@ -12,12 +14,16 @@ namespace slib {
         STARTUPINFOA si{};
         si.cb = sizeof(si);
 
+        if (jobObject != nullptr)
+            jobObject = CreateJobObjectA(nullptr, "Subprocess Job Object");
+
         SubprocessNativeWin32* sn = new SubprocessNativeWin32;
         sn->processInfo = PROCESS_INFORMATION{};
         nativeHandle = sn;
 
         char* cmdline = _strdup(commandLine.cStr());
         CreateProcessA(nullptr, cmdline, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &sn->processInfo);
+        AssignProcessToJobObject(jobObject, sn->processInfo.hProcess);
         free((void*)cmdline);
         attached = true;
     }
