@@ -4,15 +4,15 @@
 #include <stdlib.h>
 
 namespace slib {
-    HANDLE jobObject;
+    HANDLE jobObject = nullptr;
 
     struct SubprocessNativeWin32 {
         PROCESS_INFORMATION processInfo;
     };
 
     void createJobObjectIfNecessary() {
-        if (jobObject != nullptr) {
-            jobObject = CreateJobObjectA(nullptr, "Subprocess Job Object");
+        if (jobObject == nullptr) {
+            jobObject = CreateJobObjectA(nullptr, nullptr);
             JOBOBJECT_BASIC_LIMIT_INFORMATION info{};
             info.LimitFlags = 0x2000;
 
