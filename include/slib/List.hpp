@@ -136,7 +136,7 @@ namespace slib {
             return *this;
         }
 
-        size_t numElements() {
+        size_t numElements() const {
             return actualElements;
         }
 
