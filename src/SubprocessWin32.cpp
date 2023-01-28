@@ -1,4 +1,5 @@
 #include "../include/slib/Subprocess.hpp"
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <stdlib.h>
@@ -90,3 +91,4 @@ namespace slib {
         delete sn;
     }
 }
+#endif
