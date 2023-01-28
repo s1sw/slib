@@ -6,14 +6,7 @@
 #include <utility>
 #include <initializer_list>
 #include <new>
-
-namespace std {
-    struct input_iterator_tag;
-    struct output_iterator_tag;
-    struct forward_iterator_tag;
-    struct bidirectional_iterator_tag;
-    struct random_access_iterator_tag;
-}
+#include <iterator>
 
 namespace slib {
     // Dynamically sized container.
