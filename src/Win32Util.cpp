@@ -4,6 +4,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <shobjidl.h>
+#include <shellapi.h>
 #include <winrt/base.h>
 namespace winrt::impl
 {
@@ -81,6 +82,7 @@ namespace slib {
 
         dialog->SetOptions(flags | FOS_FORCEFILESYSTEM);
         dialog->Show(nullptr);
+        COMDLG_FILTERSPEC filterSpec{};
 
         IShellItem* shellResult;
         result = dialog->GetResult(&shellResult);
@@ -102,6 +104,10 @@ namespace slib {
         CoTaskMemFree(pszFilePath);
 
         return path;
+    }
+
+    void Win32Util::shellOpen(const char* path) {
+        ShellExecuteA(nullptr, nullptr, path, nullptr, nullptr, SW_SHOW);
     }
 
     bool Win32Util::isFileHidden(const char* path) {

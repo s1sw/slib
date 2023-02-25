@@ -9,6 +9,7 @@ namespace slib {
         static void enumerateDriveLetters(void(*callback)(char, void*), void* data);
         static slib::String openFolder();
         static slib::String openFile(const slib::String& extensions);
+        static void shellOpen(const char* path);
         static bool isFileHidden(const char* path);
         static void initialiseWinRT();
         static void getAccentColor(uint8_t& r, uint8_t& g, uint8_t& b);
