@@ -45,7 +45,7 @@ namespace slib {
             data[dataIdx] = (currentVal & mask) | (value << bitIdx);
         }
 
-        size_t count() {
+        size_t count() const {
             size_t sum = 0;
 
             for (int i = 0; i < numBytes; i++) {
