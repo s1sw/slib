@@ -89,6 +89,12 @@ namespace slib {
         memset(small, 0, SSO_THRESHOLD);
     }
 
+    String::~String() {
+        if (!sso) {
+            free(_data);
+        }
+    }
+
     size_t String::byteLength() const {
         // sanity check
         if (sso)

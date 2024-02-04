@@ -10,6 +10,7 @@ namespace slib {
         String(const char* dat, size_t length);
         String(const String& other);
         String(String&& other);
+        ~String();
 
         char* data() const { return sso ? (char*)small : _data; }
         const char* cStr() const { return sso ? small : _data; }
