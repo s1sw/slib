@@ -12,7 +12,9 @@ namespace slib {
     }
 
     DynamicLibrary::~DynamicLibrary() {
-        dlclose(mod);
+        if (mod != nullptr) {
+            dlclose(mod);
+        }
     }
 }
 #endif
